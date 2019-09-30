@@ -12,10 +12,12 @@
     }
     historyString = historyString.replace('"', '\'');
 
-    ArrayList<PointCoordinates> coordinates;
-    Type type = new TypeToken<ArrayList<PointCoordinates>>() {}.getType();
+    ArrayList<PointCoordinates> coordinates = new ArrayList<PointCoordinates>();
+    Type type = new TypeToken<ArrayList<PointCoordinates>>() {
+    }.getType();
     Gson gson = new Gson();
-    coordinates = gson.fromJson((String) history.getAttribute("coord"), type);
+    if (history.getAttribute("coord") != null)
+        coordinates = gson.fromJson((String) history.getAttribute("coord"), type);
 %>
 
 <!DOCTYPE html>
@@ -58,16 +60,17 @@
                 <div class="item six">Result</div>
             </li>
             <%
-                for (PointCoordinates coordinate : coordinates) {
-                    out.println("<li class=\"line\">\n" +
-                            "<div class=\"item one\">" + coordinate.getX() + "</div>\n" +
-                            "<div class=\"item two\">" + coordinate.getY() + "</div>\n" +
-                            "<div class=\"item three\">" + coordinate.getR() + "</div>\n" +
-                            "<div class=\"item four\">" + coordinate.getTimeExecute() + "</div>\n" +
-                            "<div class=\"item five\">" + coordinate.getTime() + "</div>\n" +
-                            "<div class=\"item six\">" + coordinate.getCheck() + "</div>\n" +
-                            "</li>\n");
-                }
+                if (!coordinates.isEmpty())
+                    for (PointCoordinates coordinate : coordinates) {
+                        out.println("<li class=\"line\">\n" +
+                                "<div class=\"item one\">" + coordinate.getX() + "</div>\n" +
+                                "<div class=\"item two\">" + coordinate.getY() + "</div>\n" +
+                                "<div class=\"item three\">" + coordinate.getR() + "</div>\n" +
+                                "<div class=\"item four\">" + coordinate.getTimeExecute() + "</div>\n" +
+                                "<div class=\"item five\">" + coordinate.getTime() + "</div>\n" +
+                                "<div class=\"item six\">" + coordinate.getCheck() + "</div>\n" +
+                                "</li>\n");
+                    }
             %>
         </ul>
     </main>
