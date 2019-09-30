@@ -1,3 +1,8 @@
+<%@ page import="servlets.PointCoordinates" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="com.google.gson.Gson" %>
+<%@ page import="com.google.gson.reflect.TypeToken" %>
+<%@ page import="java.lang.reflect.Type" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%
     HttpSession history = request.getSession(true);
@@ -6,6 +11,13 @@
         historyString = "";
     }
     historyString = historyString.replace('"', '\'');
+
+    ArrayList<PointCoordinates> coordinates = new ArrayList<PointCoordinates>();
+    Type type = new TypeToken<ArrayList<PointCoordinates>>() {
+    }.getType();
+    Gson gson = new Gson();
+    if (history.getAttribute("coord") != null)
+        coordinates = gson.fromJson((String) history.getAttribute("coord"), type);
 %>
 <!DOCTYPE html>
 <html lang="ru">
@@ -31,27 +43,27 @@
     <main id="main">
         <div class="field_in">
             <div class="message">
-        Заполните поля для проверки
-      </div>
+                Заполните поля для проверки
+            </div>
             <div class="r_field">
                 <div class="charR">
-          R=
-        </div>
+                    R=
+                </div>
                 <input class="r_input" name="R" placeholder="Введите число в интервале от 1 до 4" type="text"
                        title="Введите значение R" id="R" autocomplete="off" onpaste="return false;" maxlength="4">
             </div>
             <div class="y_field">
                 <div class="charY">
-          Y=
-        </div>
+                    Y=
+                </div>
                 <input class="y_input" name="Y" placeholder="Введите число в интервале от -3 до 5" type="text"
                        title="Введите значение Y" id="Y" autocomplete="off" onpaste="return false;" maxlength="4">
             </div>
             <div class="help_field">
                 <div class="x_field">
                     <div class="charX">
-            X=
-          </div>
+                        X=
+                    </div>
                     <select id="X" name="X">
                         <option value="-4" selected>-4</option>
                         <option value="-3">-3</option>
@@ -76,6 +88,31 @@
         </div>
         <script></script>
     </main>
+    <%
+        if (!coordinates.isEmpty()) {
+            out.println("<ul class=\"table\">" +
+                    "<li class=\"line\">" +
+                    "<div class=\"item one\">X</div>" +
+                    "<div class=\"item two\">Y</div>" +
+                    "<div class=\"item three\">R</div>" +
+                    "<div class=\"item four\">Lead<br>time<br>(ms)</div>" +
+                    "<div class=\"item five\">Current<br>time</div>" +
+                    "<div class=\"item six\">Result</div>" +
+                    "</li>");
+
+            for (PointCoordinates coordinate : coordinates) {
+                out.println("<li class=\"line\">\n" +
+                        "<div class=\"item one\">" + coordinate.getX() + "</div>\n" +
+                        "<div class=\"item two\">" + coordinate.getY() + "</div>\n" +
+                        "<div class=\"item three\">" + coordinate.getR() + "</div>\n" +
+                        "<div class=\"item four\">" + coordinate.getTimeExecute() + "</div>\n" +
+                        "<div class=\"item five\">" + coordinate.getTime() + "</div>\n" +
+                        "<div class=\"item six\">" + coordinate.getCheck() + "</div>\n" +
+                        "</li>\n");
+            }
+            out.print("</ul>");
+        }
+    %>
 </form>
 <div class="orehus" id="orehus"></div>
 <div class="fruits shake" id="fruits"></div>
